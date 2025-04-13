@@ -26,6 +26,39 @@ function drawCustomGraph(canvasID) {
       }]
     };
   
+  
+    function updateSensorValue(id, value, thresholds) {
+      const el = document.getElementById(id);
+      el.textContent = value;
+        
+      if(id == 'co2'){
+        if (value < thresholds.warning) {
+            el.style.color = 'blue';
+          } else if (value <= thresholds.normal) {
+            el.style.color = 'green';
+          } else {
+            el.style.color = 'red';
+          }
+      } else if (id == 'temp'){
+        if (value < thresholds.warning) {
+            el.style.color = 'blue';
+          } else if (value <= thresholds.normal) {
+            el.style.color = 'green';
+          } else {
+            el.style.color = 'red';
+          }
+      } else if (id == 'alt'){
+        if (value < thresholds.warning) {
+            el.style.color = 'blue';
+          } else if (value <= thresholds.normal) {
+            el.style.color = 'green';
+          } else {
+            el.style.color = 'red';
+          }
+      }
+    }
+    
+  
     const config = {
       type: 'line',
       data: chartData,
@@ -78,7 +111,7 @@ function drawCustomGraph(canvasID) {
   
       myChart.update();
     }
-
+  
     setInterval(() => {
       const now = new Date();
       const newLabel = now.toLocaleTimeString();
@@ -86,12 +119,18 @@ function drawCustomGraph(canvasID) {
   
       if (id === 'co2-graph') {
         newValue = Math.floor(Math.random() * 60);
+        const co2Value = newValue;
+        updateSensorValue('co2', co2Value, { normal: 50, warning: 20 })
         addData(newLabel, newValue);
       } else if (id === 'temp-graph') {
-        newValue = Math.floor(Math.random() * 80);
+        newValue = Math.floor(Math.random() * 120);
+        const tempValue = newValue;
+        updateSensorValue('temp', tempValue, { normal: 80, warning: 30 })
         addData(newLabel, newValue);
       } else if (id === 'alt-graph') {
         newValue = Math.floor(Math.random() * 20);
+        const altValue = newValue;
+        updateSensorValue('alt', altValue, { normal: 15, warning: 5 })
         addData(newLabel, newValue);
       }
       
@@ -99,4 +138,3 @@ function drawCustomGraph(canvasID) {
       document.getElementById(sensorDisplayId).textContent = getDataValue();
     }, 1000);
   }
-  
