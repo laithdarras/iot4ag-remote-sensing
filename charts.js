@@ -77,6 +77,9 @@ function drawCustomGraph(canvasID) {
             }
           }
         },
+        animation: {
+          duration: 300  
+        },
         scales: {
           y: {
             beginAtZero: true,
