@@ -11,9 +11,6 @@
       text-align: center;
       background-color: #14141400;
     }
-    .chart-container {
-      margin-bottom: 30px; 
-    }
     canvas {
       width: 100%;
       height: 200px;
@@ -28,7 +25,23 @@
     .value-display span {
      transition: color 0.5s ease;
      }
-     
+
+     .moderate-container {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      margin-top: 10px;
+      margin-bottom: 50px;
+    }
+    .too-low {
+      color: blue;
+    }
+    .normal {
+      color: green;
+    }
+    .too-high {
+      color: red;
+    }
   </style>
 </head>
 <body>
@@ -39,6 +52,10 @@
     <canvas id="co2-graph"></canvas>
     <div class="value-display">
       <strong>CO2: </strong><span id="co2">--</span> ppm
+      <div class="moderate-container">
+        <moderate class="too-low">Too Low: &lt;20</moderate>
+        <moderate class="normal">Normal: 20-50</moderate>
+        <moderate class="too-high">Too High: &gt;50</moderate>
     </div>
   </div>
 
@@ -47,6 +64,10 @@
     <canvas id="temp-graph"></canvas>
     <div class="value-display">
       <strong>Temperature: </strong><span id="temp">--</span> °C
+      <div class="moderate-container">
+        <moderate class="too-low">Too Low: &lt;30</moderate>
+        <moderate class="normal">Normal: 30-80</moderate>
+        <moderate class="too-high">Too High: &gt;80</moderate>
     </div>
   </div>
 
@@ -55,7 +76,11 @@
     <canvas id="alt-graph"></canvas>
     <div class="value-display">
       <strong>Altitude: </strong><span id="alt">--</span> meters
-    </div>
+      <div class="moderate-container">
+        <moderate class="too-low">Too Low: &lt;5</moderate>
+        <moderate class="normal">Normal: 5-15</moderate>
+        <moderate class="too-high">Too High: &gt;15</moderate>
+      </div>
   </div>
 
   <!-- Include Chart.js library -->
