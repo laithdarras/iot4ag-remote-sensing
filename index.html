@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sensor Data</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      background-color: #14141400;
+    }
+
+    canvas {
+      width: 100%;
+      height: 200px;
+    }
+
+  </style>
+</head>
+<body>
+  <h1>Real-Time Sensor Data</h1>
+
+  <!-- CO2 Sensor -->
+    <canvas id="co2-graph"></canvas>
+    <strong>CO2: </strong><span id="co2"></span> ppm
+    </div>
+  </div>
+
+  <!-- Temperature Sensor -->
+    <canvas id="temp-graph"></canvas>
+    <strong>Temperature: </strong><span id="temp"></span> °C
+    </div>
+  </div>
+
+  <!-- Altitude Sensor -->
+    <canvas id="alt-graph"></canvas>
+      <strong>Altitude: </strong><span id="alt"></span> meters
+    </div>
+  </div>
+
+  <!-- Include charts.js script -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <!-- Include our charts.js file -->
+  <script src="charts.js"></script>
+  <script>
+    drawCustomGraph('co2-graph');
+    drawCustomGraph('temp-graph');
+    drawCustomGraph('alt-graph');
+  </script>
+</body>
+</html>
+
+
+
+
