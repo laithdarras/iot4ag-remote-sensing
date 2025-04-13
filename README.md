@@ -12,6 +12,56 @@
 
 <!-- [![arXiv](https://img.shields.io/badge/arXiv-2409.04653-b31b1b.svg)](https://arxiv.org/abs/2409.04653) -->
 
+## Data Streaming
+Data is streamed in real time, structured like this:
+
+```text
+[Sending Sensor Packet]
+Timestamp    : 1744511744.0
+CO2          : 395
+Temperature  : 16.57 °C
+Pressure     : 102247.7 Pa
+Altitude     : 175.4 m
+Humidity     : 36.65 %
+Thermal Row 0: [13.52, 12.75, 11.76, ...]
+```
+
+---
+
+## Getting Started
+
+### Prerequisites
+
+- [Docker Desktop](https://www.docker.com/products/docker-desktop/)
+- [Make](https://chocolatey.org/install)  
+  _(Windows users: install via Chocolatey)_
+- [ncat (from Nmap)](https://nmap.org/ncat/)  
+  _(Required to simulate the TCP listener and receive data)_
+
+---
+
+### Run the Emulator
+
+#### 1. Open Terminal 1 — Start the TCP Listener (on port `12347`):
+
+**Linux/macOS:**
+```bash
+ncat -l -p 12347
+```
+
+**Windows**
+```bash
+"C:\Program Files (x86)\Nmap\ncat.exe" -l -p 12347
+```
+
+### 2. Open Terminal 2 — Run the Dockerized Sensor Streamer:
+run `make prod`
+
+after all that, you should see `live [Sending Sensor Packet]`and you're all set!
+
+
+---
+
 ## How to Start
 Build your container:
 ```bash
