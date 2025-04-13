@@ -11,7 +11,11 @@ from sensors.altitude import AltitudeSensorEmulator
 from sensors.humidity import HumiditySensorEmulator
 from sensors.thermalcamera import ThermalCameraSensorEmulator
 
-import protobuf.sensor_pb2 as sensor_pb2
+import sensor_pb2
+
+import sys
+import os
+sys.path.append(os.path.join(os.path.dirname(__file__), ".."))
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Sensor Station Argparser")
@@ -19,8 +23,9 @@ if __name__ == "__main__":
         "--config",
         type=str,
         help="Sensor Station YAML config file",
-        default="/sensor-station/app/config/config.yaml",
+        default="app/config/config.yaml",
     )
+
     args = parser.parse_args()
 
     with open(args.config, "r") as file:

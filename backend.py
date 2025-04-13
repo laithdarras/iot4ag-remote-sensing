@@ -31,7 +31,7 @@ def tcp_listener(host='0.0.0.0', port=12347):
                         if len(header) < 4:
                             print("Incomplete header received.")
                             break
-                        packet_len = struct.unpack('<I', header)[0]
+                        packet_len = struct.unpack('>I', header)[0]
 
                         # Sanity check
                         if packet_len <= 0 or packet_len > 10**6:
