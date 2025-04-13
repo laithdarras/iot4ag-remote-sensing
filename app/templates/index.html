@@ -56,7 +56,7 @@
   <!-- Include Chart.js library -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <!-- Include your charts.js file -->
-  <script src="charts.js"></script>
+  <script src="{{ url_for('static', filename='charts.js') }}"></script>
   <script>
     drawCustomGraph('co2-graph');
     drawCustomGraph('temp-graph');

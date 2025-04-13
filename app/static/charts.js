@@ -80,23 +80,27 @@ function drawCustomGraph(canvasID) {
     }
 
     setInterval(() => {
-      const now = new Date();
-      const newLabel = now.toLocaleTimeString();
-      let newValue;
-  
-      if (id === 'co2-graph') {
-        newValue = Math.floor(Math.random() * 60);
-        addData(newLabel, newValue);
-      } else if (id === 'temp-graph') {
-        newValue = Math.floor(Math.random() * 80);
-        addData(newLabel, newValue);
-      } else if (id === 'alt-graph') {
-        newValue = Math.floor(Math.random() * 20);
-        addData(newLabel, newValue);
-      }
-      
-      const sensorDisplayId = id.replace('-graph', '');
-      document.getElementById(sensorDisplayId).textContent = getDataValue();
+      fetch('/api/data')
+        .then(response => response.json())
+        .then(data => {
+          const now = new Date().toLocaleTimeString();
+
+          let value;
+          if (id === 'co2-graph') {
+            value = data.co2;
+          } else if (id === 'temp-graph') {
+            value = data.bme_temperature;
+          } else if (id === 'alt-graph') {
+            value = data.bme_altitude;
+          }
+
+          if (value !== undefined) {
+            addData(now, value);
+            const displayId = id.replace('-graph', '');
+            document.getElementById(displayId).textContent = value.toFixed(2);
+          }
+        })
+        .catch(err => console.error('Failed to fetch sensor data:', err));
     }, 1000);
   }
   

@@ -3,17 +3,20 @@ import socket
 import struct
 from queue import Queue
 from flask import Flask, jsonify, render_template
-import protobuf.sensor_pb2 as sensor_pb2
+import sensor_pb2
 
 # Flask app
-app = Flask(__name__)
+app = Flask(__name__,
+            template_folder="templates",
+            static_folder="static"
+            )
 
 # Shared data storage
 data_queue = Queue()
 latest_data = None
 
 # TCP listener function
-def tcp_listener(host='0.0.0.0', port=12347):
+def tcp_listener(host='127.0.0.1', port=12347):
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
         s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         s.bind((host, port))
