@@ -1,5 +1,15 @@
 function drawCustomGraph(canvasID) {
+    const id = canvasID;
     const ctx = document.getElementById(canvasID).getContext('2d');
+  
+    let titleText;
+    if (id === 'co2-graph') {
+      titleText = 'CO2 Sensor Graph';
+    } else if (id === 'temp-graph') {
+      titleText = 'Temperature Graph';
+    } else if (id === 'alt-graph') {
+      titleText = 'Altitude Graph';
+    }
   
     const initialLabels = [];
     const initialData = [];
@@ -8,8 +18,8 @@ function drawCustomGraph(canvasID) {
       labels: initialLabels,
       datasets: [{
         label: 'Sensor Reading',
-        backgroundColor: 'rgba(75, 192, 192, 0.4)', 
-        borderColor: 'rgba(75, 192, 192, 1)',         
+        backgroundColor: 'rgba(75, 192, 192, 0.4)',
+        borderColor: 'rgba(75, 192, 192, 1)',
         borderWidth: 2,
         data: initialData,
         fill: true
@@ -17,23 +27,22 @@ function drawCustomGraph(canvasID) {
     };
   
     const config = {
-      type: 'line',  
+      type: 'line',
       data: chartData,
       options: {
         responsive: true,
-        
         plugins: {
           title: {
             display: true,
-            text: 'CO2 Sensor Graph'
+            text: titleText
           }
         },
         tooltip: {
-            callbacks: {
-                label: function(context) {
-                    return 'Value: ' + context.parsed.y
-                }
+          callbacks: {
+            label: function(context) {
+              return 'Value: ' + context.parsed.y;
             }
+          }
         },
         scales: {
           y: {
@@ -48,6 +57,11 @@ function drawCustomGraph(canvasID) {
   
     const myChart = new Chart(ctx, config);
   
+    function getDataValue() {
+      const dataArr = myChart.data.datasets[0].data;
+      return dataArr[dataArr.length - 1];
+    }
+  
     function addData(label, data) {
       myChart.data.labels.push(label);
       myChart.data.datasets.forEach((dataset) => {
@@ -61,22 +75,28 @@ function drawCustomGraph(canvasID) {
           dataset.data.shift();
         });
       }
-
+  
       myChart.update();
     }
-  
+
     setInterval(() => {
       const now = new Date();
       const newLabel = now.toLocaleTimeString();
-      if(canvasID == 'co2-graph'){
-        const newValue = Math.floor(Math.random() * 60);
+      let newValue;
+  
+      if (id === 'co2-graph') {
+        newValue = Math.floor(Math.random() * 60);
         addData(newLabel, newValue);
-      } else if(canvasID == 'temp-graph'){
-        const newValue = Math.floor(Math.random() * 80);
+      } else if (id === 'temp-graph') {
+        newValue = Math.floor(Math.random() * 80);
         addData(newLabel, newValue);
-      } else if(canvasID == 'alt-graph'){
-        const newValue = Math.floor(Math.random() * 20);
+      } else if (id === 'alt-graph') {
+        newValue = Math.floor(Math.random() * 20);
         addData(newLabel, newValue);
       }
-    }, 1000); //updates every second
-}
+      
+      const sensorDisplayId = id.replace('-graph', '');
+      document.getElementById(sensorDisplayId).textContent = getDataValue();
+    }, 1000);
+  }
+  

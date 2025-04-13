@@ -11,47 +11,58 @@
       text-align: center;
       background-color: #14141400;
     }
-
+    .chart-container {
+      margin-bottom: 30px; 
+    }
     canvas {
       width: 100%;
       height: 200px;
+      display: block;  
+      margin: 0 auto;
     }
-
+    .value-display {
+      margin-top: 10px; 
+      font-size: 1.2em; 
+    }
   </style>
 </head>
 <body>
   <h1>Real-Time Sensor Data</h1>
 
   <!-- CO2 Sensor -->
+  <div class="chart-container">
     <canvas id="co2-graph"></canvas>
-    <strong>CO2: </strong><span id="co2"></span> ppm
+    <div class="value-display">
+      <strong>CO2: </strong><span id="co2">--</span> ppm
     </div>
   </div>
 
   <!-- Temperature Sensor -->
+  <div class="chart-container">
     <canvas id="temp-graph"></canvas>
-    <strong>Temperature: </strong><span id="temp"></span> °C
+    <div class="value-display">
+      <strong>Temperature: </strong><span id="temp">--</span> °C
     </div>
   </div>
 
   <!-- Altitude Sensor -->
+  <div class="chart-container">
     <canvas id="alt-graph"></canvas>
-      <strong>Altitude: </strong><span id="alt"></span> meters
+    <div class="value-display">
+      <strong>Altitude: </strong><span id="alt">--</span> meters
     </div>
   </div>
 
-  <!-- Include charts.js script -->
+  <!-- Include Chart.js library -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <!-- Include our charts.js file -->
+  <!-- Include your charts.js file -->
   <script src="charts.js"></script>
   <script>
     drawCustomGraph('co2-graph');
     drawCustomGraph('temp-graph');
     drawCustomGraph('alt-graph');
+
+
   </script>
 </body>
 </html>
-
-
-
-
