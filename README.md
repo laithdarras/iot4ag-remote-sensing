@@ -124,11 +124,11 @@ Thermal Row 0: [13.52, 12.75, 11.76, ...]
 ---
 
 ## Status
-✅ Protobuf Streaming
-✅ Serial Listener & Decoder
-✅ Flask Backend + API
-✅ Chart.js Dashboard (Mock Data)
-❌ Full integration of live hardware-to-frontend
+- ✅ Protobuf Streaming
+- ✅ Serial Listener & Decoder
+- ✅ Flask Backend + API
+- ✅ Chart.js Dashboard (Mock Data)
+- ❌ Full integration of live hardware-to-frontend
 
 ---
 
