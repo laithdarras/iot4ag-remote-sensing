@@ -1,150 +1,141 @@
-# IOT4AG Sensor Station Challenge
+# IoT4Ag Hackathon Project 2025 - Remote Sensor Station
+
 ![Docker](https://img.shields.io/badge/docker-%230db7ed.svg?style=for-the-badge&logo=docker&logoColor=white)
+[![GitHub](https://img.shields.io/badge/GitHub-ucmercedrobotics-181717.svg?style=flat&logo=github)](https://github.com/ucmercedrobotics)
+[![Website](https://img.shields.io/badge/Website-UCMRobotics-5087B2.svg?style=flat&logo=telegram)](https://robotics.ucmerced.edu/)
+[![Python](https://img.shields.io/badge/Python-3.10.12-3776AB.svg?style=flat&logo=python&logoColor=white)](https://www.python.org)
 
-[![github](https://img.shields.io/badge/GitHub-ucmercedrobotics-181717.svg?style=flat&logo=github)](https://github.com/ucmercedrobotics)
-[![website](https://img.shields.io/badge/Website-UCMRobotics-5087B2.svg?style=flat&logo=telegram)](https://robotics.ucmerced.edu/)
-[![python](https://img.shields.io/badge/Python-3.10.12-3776AB.svg?style=flat&logo=python&logoColor=white)](https://www.python.org)
-[![pre-commits](https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit&logoColor=white)](https://github.com/pre-commit/pre-commit)
-[![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
-[![Checked with mypy](http://www.mypy-lang.org/static/mypy_badge.svg)](http://mypy-lang.org/)
-<!-- TODO: work to enable pydocstyle -->
-<!-- [![pydocstyle](https://img.shields.io/badge/pydocstyle-enabled-AD4CD3)](http://www.pydocstyle.org/en/stable/) -->
+---
 
-<!-- [![arXiv](https://img.shields.io/badge/arXiv-2409.04653-b31b1b.svg)](https://arxiv.org/abs/2409.04653) -->
+## Overview
 
-## Data Streaming
-Data is streamed in real time, structured like this:
+This project was built during the **IoT4Ag Hackathon 2025**, hosted by UC Merced and the USDA-funded IoT4Ag Center. Our goal: design a **low-power, long-range, modular sensor station** for remote agricultural monitoring.
 
-```text
-[Sending Sensor Packet]
-Timestamp    : 1744511744.0
-CO2          : 395
-Temperature  : 16.57 °C
-Pressure     : 102247.7 Pa
-Altitude     : 175.4 m
-Humidity     : 36.65 %
+Using **LoRa communication**, **Protocol Buffers**, and **real-time dashboards**, we developed a wireless system to collect and transmit environmental data—like CO2, temperature, and altitude—from a base station to a remote dashboard.
+
+---
+
+## Impact
+
+Traditional sensor deployments can be **costly and hard to maintain** in large fields. By using **LoRa** (Long Range, Low Power), we enable farmers and researchers to:
+- Deploy sensors in **remote locations** without relying on cellular or Wi-Fi
+- **Visualize conditions in real time** from any location
+- **Extend battery life** thanks to LoRa’s low energy footprint
+
+This is a step toward scalable, intelligent agriculture infrastructure.
+
+---
+
+## Example Data Packet
+```bash
+[Sending Sensor Packet] 
+Timestamp : 1744511744.0 
+CO2 : 395 
+Temperature : 16.57 C 
+Pressure : 102247.7 Pa 
+Altitude : 175.4 m 
+Humidity : 36.65 % 
 Thermal Row 0: [13.52, 12.75, 11.76, ...]
 ```
 
 ---
 
-## Getting Started
+## Tech Stack
+
+- **LoRa** for long-range wireless transmission
+- **Arduino MKR WAN 1310** for LoRa
+- **Teensy board** with environmental sensors
+- **Protocol Buffers (protobuf)** for compact, efficient data serialization
+- **Flask + JavaScript + Chart.js** for web dashboard
+- **Docker** for streamlined simulation environment
+
+---
+
+## Getting Started (Simulation Mode)
 
 ### Prerequisites
+- Docker Desktop
+- Make (`choco install make` on Windows)
+- [Ncat](https://nmap.org/ncat/) (for testing TCP streaming)
 
-- [Docker Desktop](https://www.docker.com/products/docker-desktop/)
-- [Make](https://chocolatey.org/install)  
-  _(Windows users: install via Chocolatey)_
-- [ncat (from Nmap)](https://nmap.org/ncat/)  
-  _(Required to simulate the TCP listener and receive data)_
-
----
-
-### Run the Emulator
-
-#### 1. Open Terminal 1 — Start the TCP Listener (on port `12347`):
-
-**Linux/macOS:**
-```bash
-ncat -l -p 12347
-```
-
-**Windows**
-```bash
-"C:\Program Files (x86)\Nmap\ncat.exe" -l -p 12347
-```
-
-### 2. Open Terminal 2 — Run the Dockerized Sensor Streamer:
-run `make prod`
-
-after all that, you should see `live [Sending Sensor Packet]`and you're all set!
-
+### Run Simulation
+1. **Terminal 1: Start TCP listener**
+   ```bash
+   ncat -l -p 12347  # (Linux/macOS)
+   "C:\Program Files (x86)\Nmap\ncat.exe" -l -p 12347  # (Windows)
+   ```
+2. Terminal 2: Start Dockerized sensor stream: Run `make prod`
 
 ---
 
-## How to Start
-Build your container:
-```bash
-make build-image
-```
+## Data Format
 
-To start the sensor emulator:
-```bash
-make prod
-```
-This will begin a `protobuf` stream over TCP port 12347.
+### TCP + Protobuf Layout
 
-## Simulation Format
-The message format is fairly simple. It's serialized in `protobuf` with a 4 byte header that contains length of expected packet.
+| Field   | Bytes | Description                    |
+|---------|--------|--------------------------------|
+| Header  | 4      | Length of Protobuf payload     |
+| Payload | Varies | Protobuf-encoded sensor data   |
 
-### TCP Message Format - Header and Payload
+### Protobuf Schema
 
-| Field                     | Type       | Byte Offset | Field Length | Description                                               |
-|---------------------------|------------|-------------|--------------|-----------------------------------------------------------|
-| **Header (4 bytes)**       | `int32`    | 0           | 4 bytes      | The 4-byte header representing packet length.             |
-| **Payload (Serialized)**   | -          | 4           | Varies       | The remaining fields, serialized in Protobuf format.      |
+| Field            | Type     | Description                 |
+|------------------|----------|-----------------------------|
+| timestamp        | float    | Time from epoch             |
+| co2              | int32    | CO2 level (ppm)             |
+| bme_temperature  | float    | Temperature (°C)            |
+| bme_pressure     | float    | Pressure (Pa)               |
+| bme_altitude     | float    | Altitude (m)                |
+| bme_humidity     | float    | Humidity (%)                |
+| thermal.row[]    | float[]  | 2D array of pixel temps     |
 
 ---
 
-### Protobuf Format - Contents (Serialized)
+## LoRa Transmission Format
 
-| Field                     | Type       | Field Number | Byte Offset | Field Length | Description                                               |
-|---------------------------|------------|--------------|-------------|--------------|-----------------------------------------------------------|
-| **timestamp**              | `float`    | 1            | 4           | 4 bytes      | Seconds from epoch (sim) or from boot (target)           |
-| **co2**                    | `int32`    | 2            | 8           | 4 bytes      | CO2 concentration (int32)                                |
-| **bme_temperature**        | `float`    | 3            | 12          | 4 bytes      | Temperature from the BME sensor (float)                  |
-| **bme_pressure**           | `float`    | 4            | 16          | 4 bytes      | Pressure from the BME sensor (float)                     |
-| **bme_altitude**           | `float`    | 5            | 20          | 4 bytes      | Altitude from the BME sensor (float)                     |
-| **bme_humidity**           | `float`    | 6            | 24          | 4 bytes      | Humidity from the BME sensor (float)                     |
-| **thermal (repeated)**     | `float[]`  | 7            | 28          | Varies       | Array of thermal sensor data (list of floats)            |
+### Sensor Station (Transmission)
 
+| Field           | Type     | Length    | Notes                                      |
+|------------------|----------|-----------|--------------------------------------------|
+| Sync Marker      | uint8[]  | 2 bytes   | Header ID                                  |
+| Message Length   | uint8[]  | 2 bytes   | Length of payload (little endian)          |
+| Packet Payload   | byte[]   | Variable  | Protobuf-encoded sensor data               |
 
-## Developers
-If you are intending on emulating specific behavior for your challenge, feel free to edit the emulators.
-The logic behind them is a random uniform distribution of sensor data, so it is very limited and only intended to get you started.
-For your own challenge, you can update anything you want.
-For example, you might want to test out specific thermal images.
-To do this, you can edit the `ThermalCameraSensorEmulator()` with your own custom logic to generate a photo.
-However, it is recommended to not touch the `protobuf` as this format will remain consistent on the target platform (LoRa).
+### LoRa Chunk (per packet)
 
-## Target Format
-When moving to work on target, the message format will be similar.
-However, the protocol will no longer be TCP, but instead LoRa.
-You will need a hardware device to read this connection, which will be provided.
+| Field         | Type   | Length      | Description                          |
+|---------------|--------|-------------|--------------------------------------|
+| Chunk Index   | uint8  | 1 byte      | Index of this chunk                  |
+| Total Chunks  | uint8  | 1 byte      | Total number of chunks               |
+| Chunk Payload | byte[] | ≤253 bytes  | Part of Protobuf packet              |
 
-You will write the receiving LoRa driver on your own.
+> **Note:** Protobuf chunks must be reassembled before decoding.
 
-The sensor station will transmit a packet over LoRa that contains the data. A packet consists of a 4 byte header (sync marker & message length) followed by 
-the protobuf encoded sensor data. The sensor station will send the packet in multiple chunks. Each chunk is between 2 - 255 bytes and consists of a 2 byte 
-header (chunk index & total chunks) followed by a portion of the packet. The chunks will need to be reassembled to get the whole packet, which can then be 
-decoded using the protobuf schema.
+---
 
-To write the receiving LoRa driver in Arduino, you will need the 'LoRa' library and to use the LoRa frequency 915E6.
+## Arduino Setup
 
-### Sensor Station Packet Format - Contents
-| Field                     | Type         | Byte Offset | Field Length | Description                                                     |
-|---------------------------|--------------|-------------|--------------|-----------------------------------------------------------------|
-| **Sync Marker**           | `uint8[]`    | 0           | 2 bytes       | Fixed bytes to mark start of a packet.                         |
-| **Message Length**        | `uint8[]`    | 2           | 2 bytes       | Total number of bytes in encoded sensor data (little endian).  |
-| **Packet Payload**        | `byte[]`     | 4           | ? bytes       | The entire protobuf encoded sensor data.                       |
+| Component        | Description                                                        |
+|------------------|---------------------------------------------------------------------|
+| **Sender** | Reads serial data from Teensy board<br>Chunks it and sends via LoRa |
+| **Receiver** | Listens for incoming LoRa packets<br>Reassembles and forwards raw bytes to host PC via Serial (COM3) |
+| **Backend (Python)** | Listens to COM3<br>Deserializes and parses Protobuf packets<br>Feeds live Flask API to dashboard |
 
+---
 
-### LoRa Chunk Format - Contents
-| Field                     | Type         | Byte Offset | Field Length | Description                                               |
-|---------------------------|--------------|-------------|--------------|-----------------------------------------------------------|
-| **Chunk Index**           | `uint8`      | 0           | 1 byte       | Current chunk number (indexed from 0)                     |
-| **Total Chunks**          | `uint8`      | 1           | 1 byte       | Total number of chunks in the packet.                     |
-| **Chunk Payload**         | `byte[]`     | 2           | 0-253 bytes  | A portion of the full packet                              |
+## Status
+✅ Protobuf Streaming
+✅ Serial Listener & Decoder
+✅ Flask Backend + API
+✅ Chart.js Dashboard (Mock Data)
+❌ Full integration of live hardware-to-frontend
 
-### Protobuf Format - Payload (Serialized)
-The `chuck payload` from above is the below message broken up into 253 byte chunks until decomposed.
+---
 
-| Field                     | Type       | Field Number | Byte Offset | Field Length | Description                                               |
-|---------------------------|------------|--------------|-------------|--------------|-----------------------------------------------------------|
-| **timestamp**              | `float`    | 1            | 4           | 4 bytes      | Seconds from epoch (sim) or from boot (target)           |
-| **co2**                    | `int32`    | 2            | 8           | 4 bytes      | CO2 concentration (int32)                                |
-| **bme_temperature**        | `float`    | 3            | 12          | 4 bytes      | Temperature from the BME sensor (float)                  |
-| **bme_pressure**           | `float`    | 4            | 16          | 4 bytes      | Pressure from the BME sensor (float)                     |
-| **bme_altitude**           | `float`    | 5            | 20          | 4 bytes      | Altitude from the BME sensor (float)                     |
-| **bme_humidity**           | `float`    | 6            | 24          | 4 bytes      | Humidity from the BME sensor (float)                     |
-| **thermal (repeated)**     | `float[]`  | 7            | 28          | Varies       | Array of thermal sensor data (list of floats)            |
+## Credits
+- Built during the IoT4Ag Hackathon 2025 at UC Merced
+- Special thanks to Marcos S., our mentor and event organizer
+
+---
+
+### Read the full technical recap [here](https://laith.vercel.app/blog/iot4ag-hackathon.html/)
