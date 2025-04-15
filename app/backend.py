@@ -3,6 +3,7 @@ import socket
 import struct
 from queue import Queue
 from flask import Flask, jsonify, render_template
+from serial_receiver import get_latest_data, start_serial_listener
 import sensor_pb2
 
 # Flask app
@@ -76,28 +77,20 @@ def index():
 
 @app.route("/api/data")
 def get_data():
-    if latest_data:
-        # Convert thermal data from repeated Rows
-        thermal_data = []
-        for row in latest_data.row:
-            thermal_data.append(list(row.pixel_temp))  # List of floats from each Row
-
+    data = get_latest_data()
+    if data:
         return jsonify({
-            "timestamp": latest_data.timestamp,
-            "co2": latest_data.co2,
-            "bme_temperature": latest_data.bme_temperature,
-            "bme_pressure": latest_data.bme_pressure,
-            "bme_altitude": latest_data.bme_altitude,
-            "bme_humidity": latest_data.bme_humidity,
-            "thermal": thermal_data  # Nested list of floats (each row's pixel temperatures)
+            "timestamp": data.timestamp,
+            "co2": data.co2,
+            "bme_temperature": data.bme_temperature,
+            "bme_pressure": data.bme_pressure,
+            "bme_altitude": data.bme_altitude,
+            "bme_humidity": data.bme_humidity,
+            "thermal": [list(row.pixel_temp) for row in data.row]
         })
     return jsonify({"error": "No data available"}), 404
 
 
 if __name__ == "__main__":
-    # Start background threads
-    threading.Thread(target=tcp_listener, daemon=True).start()
-    threading.Thread(target=data_updater, daemon=True).start()
-
-    # Run Flask app
-    app.run(host='0.0.0.0', port=5000, debug=True)
+    # start_serial_listener()  # Start reading from Arduino
+    app.run(host="0.0.0.0", port=5000, debug=True)
